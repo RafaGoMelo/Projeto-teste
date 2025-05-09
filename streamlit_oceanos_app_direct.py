@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import seaborn as sns
@@ -13,8 +14,9 @@ Este projeto analisa os dados históricos do Prêmio Oceanos para entender padr�
 
 # 📂 Leitura dos Dados
 df = pd.read_csv("oceanos_dados_limpos_para_powerbi.csv")
+
 st.subheader("📊 Pré-visualização dos dados")
-st.dataframe(df.head())
+st.dataframe(df, use_container_width=True)
 
 # 📈 Exemplo de gráfico: Vencedores
 st.subheader("🏆 Distribuição de Vencedores")
