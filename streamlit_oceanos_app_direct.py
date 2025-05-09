@@ -17,14 +17,6 @@ df = pd.read_csv("oceanos_dados_limpos_para_powerbi.csv")
 st.subheader("📊 Pré-visualização dos dados")
 st.dataframe(df, use_container_width=True)
 
-# 📈 Exemplo de gráfico: Vencedores
-st.subheader("🏆 Distribuição de Vencedores")
-fig1, ax1 = plt.subplots()
-df.groupby('Vencedor').size().plot(kind='barh', color=sns.color_palette('Dark2'), ax=ax1)
-ax1.set_title("Distribuição de Vencedores")
-ax1.spines[['top', 'right']].set_visible(False)
-st.pyplot(fig1)
-
 # 📊 Gráfico personalizado OLAP com seletores
 st.subheader("🎛️ Gráfico Personalizado de Participação")
 
