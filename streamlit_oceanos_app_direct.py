@@ -17,10 +17,9 @@ df = pd.read_csv("oceanos_dados_limpos_para_powerbi.csv")
 st.subheader("📊 Pré-visualização dos dados")
 st.dataframe(df, use_container_width=True)
 
-# 📊 Gráfico personalizado OLAP com seletores
+# 📊 Gráfico Personalizado com Seletores
 st.subheader("🎛️ Gráfico Personalizado de Participação")
 
-# Opções de dimensões e situações
 dimensoes = {
     "Gênero do Autor": "GeneroAutor",
     "Gênero Literário": "GeneroLivro",
@@ -34,28 +33,39 @@ situacoes = {
     "Apenas Finalistas": "Finalista",
     "Apenas Semifinalistas": "Semifinalista"
 }
+tipos_grafico = ["Barra", "Pizza", "Linha"]
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
-    dimensao_escolhida = st.selectbox("Selecione o agrupamento (dimensão):", list(dimensoes.keys()))
+    dimensao_escolhida = st.selectbox("Agrupar por:", list(dimensoes.keys()))
 with col2:
     situacao_escolhida = st.selectbox("Filtrar por:", list(situacoes.keys()))
+with col3:
+    tipo_grafico = st.selectbox("Tipo de Gráfico:", tipos_grafico)
 
 coluna_agrupamento = dimensoes[dimensao_escolhida]
 filtro_coluna = situacoes[situacao_escolhida]
 
-# Aplicar filtro e gerar gráfico
-if filtro_coluna:
-    df_plot = df[df[filtro_coluna] == "Sim"]
-else:
-    df_plot = df.copy()
+df_plot = df if not filtro_coluna else df[df[filtro_coluna] == "Sim"]
+
+st.markdown(f"🔍 Total de registros considerados: {len(df_plot)}")
 
 if coluna_agrupamento in df_plot.columns:
-    grafico = df_plot[coluna_agrupamento].value_counts().sort_values(ascending=False)
-    st.bar_chart(grafico)
-    st.markdown(f"🔍 Total de registros considerados: {len(df_plot)}")
+    contagem = df_plot[coluna_agrupamento].value_counts().sort_values(ascending=False)
+
+    if tipo_grafico == "Barra":
+        st.bar_chart(contagem)
+    elif tipo_grafico == "Linha":
+        st.line_chart(contagem)
+    elif tipo_grafico == "Pizza":
+        fig, ax = plt.subplots()
+        contagem.plot.pie(autopct="%1.1f%%", ax=ax)
+        ax.set_ylabel("")
+        ax.set_title(f"{dimensao_escolhida}")
+        st.pyplot(fig)
 else:
     st.warning("Coluna selecionada não encontrada.")
+
 
 # ✅ Conclusão
 st.subheader("📌 Conclusões")
