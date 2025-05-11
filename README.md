@@ -12,7 +12,7 @@ https://projeto-testegit-lbwocztuqbddkpstfthdnd.streamlit.app/#generos-literario
 - Matplotlib e Seaborn
 - Streamlit
 
-## **🧠** Base de Dados utilizada
+## 🎲 Base de Dados utilizada
 - https://basedosdados.org/dataset/1e6d3f07-cf38-4149-9c09-1c4f39ee6b0b?table=df9cf42a-5f37-44c8-a935-eeaf1a0d6903
 
 ## 📊 Funcionalidades
