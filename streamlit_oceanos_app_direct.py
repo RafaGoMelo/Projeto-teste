@@ -66,15 +66,39 @@ if coluna_agrupamento in df_plot.columns:
 else:
     st.warning("Coluna selecionada não encontrada.")
 
-
-# ✅ Conclusão
-st.subheader("📌 Conclusões")
+# Conclusões + Soluções
 st.markdown("""
+# 📌 Conclusões
+
 - O prêmio tem crescido anualmente.  
 - A participação feminina ainda é menor que a masculina.  
 - Poesia e romance são os gêneros mais inscritos.  
 - O Brasil domina em número de autores, mas há presença internacional relevante.  
 
-**Soluções sugeridas:**  
-Incentivo a autores de países e gêneros sub-representados; criação de painel BI público com indicadores de diversidade.
+---
+
+## 💡 Soluções Propostas
+
+### 1. 📢 Incentivo à Participação de Autores Sub-representados
+- Campanhas direcionadas a países lusófonos com baixa participação (ex: Moçambique, Angola, Timor-Leste).
+- Parcerias com editoras locais e coletivos literários nesses países.
+- Criação de categorias especiais ou cotas de destaque para autores desses territórios.
+
+### 2. 🚻 Ações de Equidade de Gênero
+- Estímulo à inscrição de mulheres, pessoas trans e não-binárias com ações afirmativas ou premiações paralelas.
+- Inclusão de indicadores de gênero e diversidade nos relatórios públicos do prêmio.
+- Painel de acompanhamento anual para verificar a evolução da representatividade.
+
+### 3. 📚 Diversificação de Gêneros Literários
+- Criação de chamadas temáticas para incentivar gêneros pouco inscritos, como crônica, ensaio e dramaturgia.
+- Workshops ou mentorias para novos autores nesses gêneros.
+- Premiação de categorias por gênero literário.
+
+### 4. 📊 Painel BI Público com Indicadores de Diversidade
+- Desenvolver um painel (como este app Streamlit) com:
+  - Evolução de inscrições por gênero, país e faixa etária.
+  - Comparativos entre inscritos, finalistas e vencedores.
+  - Filtros interativos para consulta por ano, país ou gênero literário.
+
+🎯 Objetivo: garantir **transparência**, promover **equidade** e permitir que a curadoria do prêmio se apoie em **dados reais** para decisões mais inclusivas.
 """)
