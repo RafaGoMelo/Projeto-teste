@@ -20,6 +20,10 @@ with tab1:
     st.subheader("📚 Gêneros Literários Mais Frequentes")
     st.bar_chart(df['GeneroLivro'].value_counts())
 
+    st.subheader("📋 Visualização da Tabela Completa")
+    st.dataframe(df, use_container_width=True)
+
+
 with tab2:
     st.header("📈 Evolução ao Longo do Tempo")
     st.subheader("📅 Total de Inscrições por Ano")
