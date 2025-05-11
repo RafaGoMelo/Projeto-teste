@@ -1,104 +1,84 @@
-
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
-st.title("📘 Análise Interativa do Prêmio Oceanos de Literatura")
+st.title("📊 Painel BI - Prêmio Oceanos de Literatura")
 
-# 📄 Introdução
-st.markdown("""
-Este projeto analisa os dados históricos do Prêmio Oceanos para entender padrões de participação, diversidade de autores e gêneros, e sugerir melhorias baseadas em dados.
-""")
-
-# 📂 Leitura dos Dados
 df = pd.read_csv("oceanos_dados_limpos_para_powerbi.csv")
-st.subheader("📊 Pré-visualização dos dados")
-st.dataframe(df, use_container_width=True)
 
-# 📊 Gráfico Personalizado com Seletores
-st.subheader("🎛️ Gráfico Personalizado de Participação")
+tab1, tab2, tab3, tab4 = st.tabs(["📌 Visão Geral", "📈 Evolução Temporal", "🌍 Indicadores de Diversidade", "🎛️ Gráfico Personalizado"])
 
-dimensoes = {
-    "Gênero do Autor": "GeneroAutor",
-    "Gênero Literário": "GeneroLivro",
-    "País do Autor": "PaisAutor",
-    "Faixa Etária do Autor": "FaixaEtariaAutor",
-    "Ano": "Ano"
-}
-situacoes = {
-    "Todos os inscritos": None,
-    "Apenas Vencedores": "Vencedor",
-    "Apenas Finalistas": "Finalista",
-    "Apenas Semifinalistas": "Semifinalista"
-}
-tipos_grafico = ["Barra", "Pizza", "Linha"]
+with tab1:
+    st.header("📌 Indicadores Gerais")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total de Obras", len(df))
+    col2.metric("Total de Autores", df['NomeAutor'].nunique())
+    col3.metric("Total de Países", df['PaisAutor'].nunique())
+    st.subheader("🎯 Participação por Gênero")
+    st.bar_chart(df['GeneroAutor'].value_counts())
+    st.subheader("📚 Gêneros Literários Mais Frequentes")
+    st.bar_chart(df['GeneroLivro'].value_counts())
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    dimensao_escolhida = st.selectbox("Agrupar por:", list(dimensoes.keys()))
-with col2:
-    situacao_escolhida = st.selectbox("Filtrar por:", list(situacoes.keys()))
-with col3:
-    tipo_grafico = st.selectbox("Tipo de Gráfico:", tipos_grafico)
+with tab2:
+    st.header("📈 Evolução ao Longo do Tempo")
+    st.subheader("📅 Total de Inscrições por Ano")
+    st.line_chart(df.groupby('Ano').size())
+    st.subheader("🚻 Participação Feminina por Ano")
+    mulheres = df[df['GeneroAutor'] == 'Feminino'].groupby('Ano').size()
+    st.line_chart(mulheres)
+    st.subheader("🏅 Finalistas por Ano")
+    finalistas = df[df['Finalista'] == 'Sim'].groupby('Ano').size()
+    st.line_chart(finalistas)
 
-coluna_agrupamento = dimensoes[dimensao_escolhida]
-filtro_coluna = situacoes[situacao_escolhida]
+with tab3:
+    st.header("🌍 Indicadores de Diversidade")
+    st.subheader("🌐 Participação por País")
+    st.bar_chart(df['PaisAutor'].value_counts())
+    st.subheader("📊 Faixa Etária dos Autores")
+    st.bar_chart(df['FaixaEtariaAutor'].value_counts())
+    st.subheader("🎖️ Proporção de Vencedores por Gênero")
+    vencedores = df[df['Vencedor'] == "Sim"]
+    st.bar_chart(vencedores['GeneroAutor'].value_counts())
 
-df_plot = df if not filtro_coluna else df[df[filtro_coluna] == "Sim"]
-
-st.markdown(f"🔍 Total de registros considerados: {len(df_plot)}")
-
-if coluna_agrupamento in df_plot.columns:
-    contagem = df_plot[coluna_agrupamento].value_counts().sort_values(ascending=False)
-
-    if tipo_grafico == "Barra":
-        st.bar_chart(contagem)
-    elif tipo_grafico == "Linha":
-        st.line_chart(contagem)
-    elif tipo_grafico == "Pizza":
-        fig, ax = plt.subplots()
-        contagem.plot.pie(autopct="%1.1f%%", ax=ax)
-        ax.set_ylabel("")
-        ax.set_title(f"{dimensao_escolhida}")
-        st.pyplot(fig)
-else:
-    st.warning("Coluna selecionada não encontrada.")
-
-# Conclusões + Soluções
-st.markdown("""
-# 📌 Conclusões
-
-- O prêmio tem crescido anualmente.  
-- A participação feminina ainda é menor que a masculina.  
-- Poesia e romance são os gêneros mais inscritos.  
-- O Brasil domina em número de autores, mas há presença internacional relevante.  
-
----
-
-## 💡 Soluções Propostas
-
-### 1. 📢 Incentivo à Participação de Autores Sub-representados
-- Campanhas direcionadas a países lusófonos com baixa participação (ex: Moçambique, Angola, Timor-Leste).
-- Parcerias com editoras locais e coletivos literários nesses países.
-- Criação de categorias especiais ou cotas de destaque para autores desses territórios.
-
-### 2. 🚻 Ações de Equidade de Gênero
-- Estímulo à inscrição de mulheres, pessoas trans e não-binárias com ações afirmativas ou premiações paralelas.
-- Inclusão de indicadores de gênero e diversidade nos relatórios públicos do prêmio.
-- Painel de acompanhamento anual para verificar a evolução da representatividade.
-
-### 3. 📚 Diversificação de Gêneros Literários
-- Criação de chamadas temáticas para incentivar gêneros pouco inscritos, como crônica, ensaio e dramaturgia.
-- Workshops ou mentorias para novos autores nesses gêneros.
-- Premiação de categorias por gênero literário.
-
-### 4. 📊 Painel BI Público com Indicadores de Diversidade
-- Desenvolver um painel (como este app Streamlit) com:
-  - Evolução de inscrições por gênero, país e faixa etária.
-  - Comparativos entre inscritos, finalistas e vencedores.
-  - Filtros interativos para consulta por ano, país ou gênero literário.
-
-🎯 Objetivo: garantir **transparência**, promover **equidade** e permitir que a curadoria do prêmio se apoie em **dados reais** para decisões mais inclusivas.
-""")
+with tab4:
+    st.header("🎛️ Gráfico Dinâmico por Filtro")
+    dimensoes = {
+        "Gênero do Autor": "GeneroAutor",
+        "Gênero Literário": "GeneroLivro",
+        "País do Autor": "PaisAutor",
+        "Faixa Etária do Autor": "FaixaEtariaAutor",
+        "Ano": "Ano"
+    }
+    situacoes = {
+        "Todos os inscritos": None,
+        "Apenas Vencedores": "Vencedor",
+        "Apenas Finalistas": "Finalista",
+        "Apenas Semifinalistas": "Semifinalista"
+    }
+    tipos_grafico = ["Barra", "Pizza", "Linha"]
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        dimensao_escolhida = st.selectbox("Agrupar por:", list(dimensoes.keys()))
+    with col2:
+        situacao_escolhida = st.selectbox("Filtrar por:", list(situacoes.keys()))
+    with col3:
+        tipo_grafico = st.selectbox("Tipo de Gráfico:", tipos_grafico)
+    coluna_agrupamento = dimensoes[dimensao_escolhida]
+    filtro_coluna = situacoes[situacao_escolhida]
+    df_plot = df if not filtro_coluna else df[df[filtro_coluna] == "Sim"]
+    st.markdown(f"🔍 Total de registros considerados: {len(df_plot)}")
+    if coluna_agrupamento in df_plot.columns:
+        contagem = df_plot[coluna_agrupamento].value_counts().sort_values(ascending=False)
+        if tipo_grafico == "Barra":
+            st.bar_chart(contagem)
+        elif tipo_grafico == "Linha":
+            st.line_chart(contagem)
+        elif tipo_grafico == "Pizza":
+            fig, ax = plt.subplots()
+            contagem.plot.pie(autopct="%1.1f%%", ax=ax)
+            ax.set_ylabel("")
+            ax.set_title(f"{dimensao_escolhida}")
+            st.pyplot(fig)
+    else:
+        st.warning("Coluna selecionada não encontrada.")
