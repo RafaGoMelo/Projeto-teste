@@ -92,14 +92,11 @@ with tab4:
         elif tipo_grafico == "Linha":
             st.line_chart(contagem)
         elif tipo_grafico == "Pizza":
-    import matplotlib.pyplot as plt
-            fig, ax = plt.subplots(figsize=(5, 5))
-            contagem.plot.pie(autopct="%1.1f%%", ax=ax, textprops={'fontsize': 10})
+            import matplotlib.pyplot as plt
+            fig, ax = plt.subplots()
+            contagem.plot.pie(autopct="%1.1f%%", ax=ax)
             ax.set_ylabel("")
-            ax.set_title(f"{dimensao_escolhida}", fontsize=12)
-            plt.tight_layout()
+            ax.set_title(f"{dimensao_escolhida}")
             st.pyplot(fig)
-
     else:
         st.warning("❌ Coluna de agrupamento não encontrada no DataFrame.")
-
