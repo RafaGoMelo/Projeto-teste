@@ -48,12 +48,10 @@ with tab3:
 with tab4:
     st.header("🎛️ Gráfico Dinâmico por Filtro")
 
-    # Filtros adicionais
+    # Filtro por Ano apenas
     anos = st.multiselect("Ano", sorted(df["Ano"].dropna().unique()), default=sorted(df["Ano"].dropna().unique()))
-    paises = st.multiselect("País do Autor", sorted(df["PaisAutor"].dropna().unique()), default=sorted(df["PaisAutor"].dropna().unique()))
-    generos = st.multiselect("Gênero do Autor", sorted(df["GeneroAutor"].dropna().unique()), default=sorted(df["GeneroAutor"].dropna().unique()))
 
-    # Filtros OLAP
+    # Filtros dinâmicos
     dimensoes = {
         "Gênero do Autor": "GeneroAutor",
         "Gênero Literário": "GeneroLivro",
@@ -77,12 +75,8 @@ with tab4:
     with col3:
         tipo_grafico = st.selectbox("Tipo de Gráfico:", tipos_grafico)
 
-    # Aplicar os filtros
-    df_filtrado = df[
-        df["Ano"].isin(anos) &
-        df["PaisAutor"].isin(paises) &
-        df["GeneroAutor"].isin(generos)
-    ]
+    # Aplicar filtro por ano
+    df_filtrado = df[df["Ano"].isin(anos)]
 
     if situacoes[situacao_escolhida]:
         df_filtrado = df_filtrado[df_filtrado[situacoes[situacao_escolhida]] == "Sim"]
