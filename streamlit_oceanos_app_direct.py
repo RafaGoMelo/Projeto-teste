@@ -47,6 +47,13 @@ with tab3:
 
 with tab4:
     st.header("🎛️ Gráfico Dinâmico por Filtro")
+
+    # Filtros extras
+    anos = st.multiselect("Ano", sorted(df["Ano"].unique()), default=sorted(df["Ano"].unique()))
+    paises = st.multiselect("País do Autor", sorted(df["PaisAutor"].unique()), default=sorted(df["PaisAutor"].unique()))
+    generos_autor = st.multiselect("Gênero do Autor", df["GeneroAutor"].dropna().unique(), default=df["GeneroAutor"].dropna().unique())
+
+    # Filtros dinâmicos
     dimensoes = {
         "Gênero do Autor": "GeneroAutor",
         "Gênero Literário": "GeneroLivro",
@@ -61,19 +68,31 @@ with tab4:
         "Apenas Semifinalistas": "Semifinalista"
     }
     tipos_grafico = ["Barra", "Pizza", "Linha"]
+
     col1, col2, col3 = st.columns(3)
     with col1:
         dimensao_escolhida = st.selectbox("Agrupar por:", list(dimensoes.keys()))
     with col2:
-        situacao_escolhida = st.selectbox("Filtrar por:", list(situacoes.keys()))
+        situacao_escolhida = st.selectbox("Filtrar por status:", list(situacoes.keys()))
     with col3:
         tipo_grafico = st.selectbox("Tipo de Gráfico:", tipos_grafico)
+
+    # Aplicar os filtros
+    df_filtrado = df[
+        (df['Ano'].isin(anos)) &
+        (df['PaisAutor'].isin(paises)) &
+        (df['GeneroAutor'].isin(generos_autor))
+    ]
+    if situacoes[situacao_escolhida]:
+        df_filtrado = df_filtrado[df_filtrado[situacoes[situacao_escolhida]] == "Sim"]
+
     coluna_agrupamento = dimensoes[dimensao_escolhida]
-    filtro_coluna = situacoes[situacao_escolhida]
-    df_plot = df if not filtro_coluna else df[df[filtro_coluna] == "Sim"]
-    st.markdown(f"🔍 Total de registros considerados: {len(df_plot)}")
-    if coluna_agrupamento in df_plot.columns:
-        contagem = df_plot[coluna_agrupamento].value_counts().sort_values(ascending=False)
+
+    st.markdown(f"🔍 Total de registros após filtros: {len(df_filtrado)}")
+
+    if coluna_agrupamento in df_filtrado.columns:
+        contagem = df_filtrado[coluna_agrupamento].value_counts().sort_values(ascending=False)
+
         if tipo_grafico == "Barra":
             st.bar_chart(contagem)
         elif tipo_grafico == "Linha":
@@ -86,3 +105,4 @@ with tab4:
             st.pyplot(fig)
     else:
         st.warning("Coluna selecionada não encontrada.")
+
