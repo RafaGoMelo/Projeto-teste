@@ -50,8 +50,6 @@ with tab4:
 
     # Filtros adicionais
     anos = st.multiselect("Ano", sorted(df["Ano"].dropna().unique()), default=sorted(df["Ano"].dropna().unique()))
-    paises = st.multiselect("País do Autor", sorted(df["PaisAutor"].dropna().unique()), default=sorted(df["PaisAutor"].dropna().unique()))
-    generos = st.multiselect("Gênero do Autor", sorted(df["GeneroAutor"].dropna().unique()), default=sorted(df["GeneroAutor"].dropna().unique()))
 
     # Filtros OLAP
     dimensoes = {
