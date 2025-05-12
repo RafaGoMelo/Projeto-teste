@@ -48,12 +48,12 @@ with tab3:
 with tab4:
     st.header("🎛️ Gráfico Dinâmico por Filtro")
 
-    # Filtros extras
-    anos = st.multiselect("Ano", sorted(df["Ano"].unique()), default=sorted(df["Ano"].unique()))
-    paises = st.multiselect("País do Autor", sorted(df["PaisAutor"].unique()), default=sorted(df["PaisAutor"].unique()))
-    generos_autor = st.multiselect("Gênero do Autor", df["GeneroAutor"].dropna().unique(), default=df["GeneroAutor"].dropna().unique())
+    # Filtros adicionais
+    anos = st.multiselect("Ano", sorted(df["Ano"].dropna().unique()), default=sorted(df["Ano"].dropna().unique()))
+    paises = st.multiselect("País do Autor", sorted(df["PaisAutor"].dropna().unique()), default=sorted(df["PaisAutor"].dropna().unique()))
+    generos = st.multiselect("Gênero do Autor", sorted(df["GeneroAutor"].dropna().unique()), default=sorted(df["GeneroAutor"].dropna().unique()))
 
-    # Filtros dinâmicos
+    # Filtros OLAP
     dimensoes = {
         "Gênero do Autor": "GeneroAutor",
         "Gênero Literário": "GeneroLivro",
@@ -79,16 +79,16 @@ with tab4:
 
     # Aplicar os filtros
     df_filtrado = df[
-        (df['Ano'].isin(anos)) &
-        (df['PaisAutor'].isin(paises)) &
-        (df['GeneroAutor'].isin(generos_autor))
+        df["Ano"].isin(anos) &
+        df["PaisAutor"].isin(paises) &
+        df["GeneroAutor"].isin(generos)
     ]
+
     if situacoes[situacao_escolhida]:
         df_filtrado = df_filtrado[df_filtrado[situacoes[situacao_escolhida]] == "Sim"]
 
     coluna_agrupamento = dimensoes[dimensao_escolhida]
-
-    st.markdown(f"🔍 Total de registros após filtros: {len(df_filtrado)}")
+    st.markdown(f"🔍 Total de registros filtrados: {len(df_filtrado)}")
 
     if coluna_agrupamento in df_filtrado.columns:
         contagem = df_filtrado[coluna_agrupamento].value_counts().sort_values(ascending=False)
@@ -98,11 +98,13 @@ with tab4:
         elif tipo_grafico == "Linha":
             st.line_chart(contagem)
         elif tipo_grafico == "Pizza":
+            import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
             contagem.plot.pie(autopct="%1.1f%%", ax=ax)
             ax.set_ylabel("")
             ax.set_title(f"{dimensao_escolhida}")
             st.pyplot(fig)
     else:
-        st.warning("Coluna selecionada não encontrada.")
+        st.warning("❌ Coluna de agrupamento não encontrada no DataFrame.")
+
 
